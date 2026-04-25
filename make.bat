@@ -39,12 +39,12 @@ if %ACTION% EQU clean (
 )
 
 if %ACTION% EQU push (
-	git push https://github.com/collins994/handmade_hero main
+	git push https://github.com/collins994/cpp_lox main
 	EXIT /B
 )
 
 if %ACTION% EQU pull (
-	git pull https://github.com/collins994/handmade_hero main
+	git pull https://github.com/collins994/cpp_lox main
 	EXIT /B
 )
 

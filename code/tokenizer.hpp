@@ -3,6 +3,8 @@
 enum Kind {
 	// single character tokens
 	LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE, RIGHT_BRACE, COMMA, DOT, MINUS, PLUS, SEMICOLON, SLASH, STAR,
+
+	END_OF_FILE, INVALID,
 };
 
 struct Token {
@@ -17,9 +19,38 @@ struct Tokenizer {
 };
 
 Token next_token(Tokenizer* tokenizer) {
-	Token token = {.start = 0, .end=2};
-	return token;
+	Token next_token = {.kind = INVALID, .start=tokenizer->index, .end=0};
+
+	char next_character = tokenizer->buffer[tokenizer->index];
+	tokenizer->index += 1;
+	switch (next_character) {
+		case '(': { next_token.kind = LEFT_PAREN; } break;
+		case ')': { next_token.kind = RIGHT_PAREN; } break;
+	}
+
+	next_token.end = tokenizer->index;
+	return next_token;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /* 
 	read the file into tokenizer.buffer
@@ -51,5 +82,4 @@ int tokenizer_init(Tokenizer *tokenizer, const char *file_path){
 void tokenizer_destroy(Tokenizer *tokenizer) {
 	free((void *)tokenizer->buffer);
 }
-
 #endif // _H_TOKENIZER
