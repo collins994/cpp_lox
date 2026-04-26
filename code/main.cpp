@@ -23,7 +23,7 @@ int main(int argc, char *argv[]) {
 		exit(EXIT_FAILURE);
 	}
 
-	Token token = next_token(&tokenizer);
+	Token token = tokenizer_next_token(&tokenizer);
 	tokenizer_destroy(&tokenizer);
 	*/
 }

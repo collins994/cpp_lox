@@ -23,14 +23,6 @@ if %ACTION% EQU run (
 	EXIT /B
 )
 
-:: if %ACTION% EQU run (
-:: 	pushd build
-:: 		:: .\%EXECUTABLE_FILE% file.lox
-:: 		.\%EXECUTABLE_FILE% %2
-:: 	popd
-::  	EXIT /B
-:: )
-
 if %ACTION% EQU clean (
 	echo cleaning the build folder...
 	del .\build\*
