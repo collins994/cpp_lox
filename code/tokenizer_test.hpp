@@ -1,20 +1,49 @@
 #ifndef _H_TOKENIZER_TEST
 #define _H_TOKENIZER_TEST
 
-#define ASSERT(v) if(!(v)) {printf("FAILED ASSERTION, FILE: %s, LINE: %d\n", __FILE__, __LINE__);}
+#define ASSERT(v) if(!(v)) {printf("FAILED ASSERTION, %s: %d\n", __FILE__, __LINE__);}
 
 bool operator==(Token t1, Token t2) { return t1.kind == t2.kind && t1.start == t2.start && t1.end == t2.end; }
 
 Token newToken(Kind kind, u32 start, u32 end) { Token t = {.kind = kind, .start = start, .end = end}; return t; }
 
 void token_print(Token token) {
-	printf("token{kind: %d, start: %d, end: %d}\n", token.kind, token.start, token.end);
+	char *string_kind;
+	switch(token.kind) {
+		case LEFT_PAREN: string_kind = "LEFT_PAREN"; break; 
+		case RIGHT_PAREN: string_kind = "RIGHT_PAREN"; break; 
+		case LEFT_BRACE: string_kind = "LEFT_BRACE"; break; 
+		case RIGHT_BRACE: string_kind = "RIGHT_BRACE"; break; 
+		case COMMA: string_kind = "COMMA"; break; 
+		case DOT: string_kind = "DOT"; break; 
+		case MINUS: string_kind = "MINUS"; break; 
+		case PLUS: string_kind = "PLUS"; break; 
+		case SEMICOLON: string_kind = "SEMICOLON"; break; 
+		case SLASH: string_kind = "SLASH"; break; 
+		case STAR: string_kind = "STAR"; break; 
+		case BANG: string_kind = "BANG"; break; 
+		case BANG_EQUAL: string_kind = "BANG_EQUAL"; break; 
+		case EQUAL: string_kind = "EQUAL"; break; 
+		case EQUAL_EQUAL: string_kind = "EQUAL_EQUAL"; break; 
+		case GREATER: string_kind = "GREATER"; break; 
+		case GREATER_EQUAL: string_kind = "GREATER_EQUAL"; break; 
+		case LESS: string_kind = "LESS"; break; 
+		case LESS_EQUAL: string_kind = "LESS_EQUAL"; break; 
+		case END_OF_FILE: string_kind = "END_OF_FILE"; break;
+		case INVALID: string_kind = "INVALID"; break; 
+
+		default: string_kind = "UNKNOWN TOKEN KIND"; break;
+	}
+
+	printf("token{kind: %s, start: %d, end: %d}\n", string_kind, token.start, token.end);
 }
 
+// BANG, BANG_EQUAL, EQUAL, EQUAL_EQUAL, GREATER, GREATER_EQUAL, LESS, LESS_EQUAL
+
 void tokenizer_test() {
-	printf("RUNNING TESTS:\n");
+	printf("TESTING THE TOKENIZER...\n");
 	Tokenizer tokenizer = {
-		.buffer = "(){},.-+;/*!=",
+		.buffer = "(){},.-+;/*!=! = == > >= < <=",
 		.index = 0,
 	};
 	tokenizer.count = strlen(tokenizer.buffer);
@@ -31,7 +60,14 @@ void tokenizer_test() {
 	ASSERT(tokenizer_next_token(&tokenizer) == newToken(SLASH, 9, 10));
 	ASSERT(tokenizer_next_token(&tokenizer) == newToken(STAR, 10, 11));
 	ASSERT(tokenizer_next_token(&tokenizer) == newToken(BANG_EQUAL, 11, 13));
-	ASSERT(tokenizer_next_token(&tokenizer) == newToken(END_OF_FILE, 13, 13));
+	ASSERT(tokenizer_next_token(&tokenizer) == newToken(BANG, 13, 14));
+	ASSERT(tokenizer_next_token(&tokenizer) == newToken(EQUAL, 15, 16));
+	ASSERT(tokenizer_next_token(&tokenizer) == newToken(EQUAL_EQUAL, 17, 19));
+	ASSERT(tokenizer_next_token(&tokenizer) == newToken(GREATER, 20, 21));
+	ASSERT(tokenizer_next_token(&tokenizer) == newToken(GREATER_EQUAL, 22, 24));
+	ASSERT(tokenizer_next_token(&tokenizer) == newToken(LESS, 25, 26));
+	ASSERT(tokenizer_next_token(&tokenizer) == newToken(LESS_EQUAL, 27, 29));
+	ASSERT(tokenizer_next_token(&tokenizer) == newToken(END_OF_FILE, 29, 29));
 
 	printf("DONE\n");
 }

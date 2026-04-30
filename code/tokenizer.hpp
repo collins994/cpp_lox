@@ -30,6 +30,12 @@ char tokenizer_peek(Tokenizer *tokenizer){
 }
 
 Token tokenizer_next_token(Tokenizer* tokenizer) {
+	// skip whitespace between tokens
+	for(;;) {
+		char next_character = tokenizer->buffer[tokenizer->index];
+		if (((next_character != ' ') && (next_character != '\t')) || (tokenizer->index >= tokenizer->count)) break; // break if we get to a non-space character or the end of input
+		tokenizer->index++;
+	}
 	Token next_token = {.kind = INVALID, .start=tokenizer->index, .end=0};
 
 	// peek to make sure there is a character before reading it
@@ -38,6 +44,7 @@ Token tokenizer_next_token(Tokenizer* tokenizer) {
 		next_token.end = tokenizer->index;
 		return next_token;
 	}
+
 
 	char next_character = tokenizer->buffer[tokenizer->index];
 	tokenizer->index += 1;
@@ -60,12 +67,29 @@ Token tokenizer_next_token(Tokenizer* tokenizer) {
 				next_token.kind = BANG_EQUAL; 
 			}
 		} break;
-		case '=': { next_token.kind = EQUAL; } break;
-		case '>': { next_token.kind = GREATER; } break;
-		case '<': { next_token.kind = LESS; } break;
+		case '=': { 
+			next_token.kind = EQUAL; 
+			if(tokenizer_peek(tokenizer) == '=') {
+				tokenizer->index += 1; 
+				next_token.kind = EQUAL_EQUAL; 
+			}
+		} break;
+		case '>': { 
+			next_token.kind = GREATER; 
+			if(tokenizer_peek(tokenizer) == '=') {
+				tokenizer->index += 1; 
+				next_token.kind = GREATER_EQUAL; 
+			}
+		} break;
+		case '<': { 
+			next_token.kind = LESS; 
+			if(tokenizer_peek(tokenizer) == '=') {
+				tokenizer->index += 1; 
+				next_token.kind = LESS_EQUAL; 
+			}
+		} break;
 	}
 
-// BANG, BANG_EQUAL, EQUAL, EQUAL_EQUAL, GREATER, GREATER_EQUAL, LESS, LESS_EQUAL
 	next_token.end = tokenizer->index;
 	return next_token;
 }
