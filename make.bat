@@ -12,9 +12,7 @@ if "%ACTION%" == ""  (
 
 if %ACTION% EQU build (
 	echo building into .\build\...
-	:: pushd .\build
 	clang-cl /Zi .\code\%MAINFILE% -o .\build\%EXECUTABLE_FILE% %LIBRARIES% && echo done! || echo compilation failed, error code: %ERRORLEVEL%
-	:: popd 
 	EXIT /B
 ) 
 

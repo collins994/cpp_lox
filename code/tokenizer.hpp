@@ -5,7 +5,11 @@ enum Kind {
 	LEFT_PAREN, RIGHT_PAREN, LEFT_BRACE, RIGHT_BRACE, COMMA, DOT, MINUS, PLUS, SEMICOLON, SLASH, STAR,
 	// One or two character tokens.
 	BANG, BANG_EQUAL, EQUAL, EQUAL_EQUAL, GREATER, GREATER_EQUAL, LESS, LESS_EQUAL,
-	// 
+	// literals
+	IDENTIFIER, STRING, NUMBER,
+	// keywords
+	AND, CLASS, ELSE, FALSE, FUN, FOR, IF, NIL, OR, PRINT, RETURN, SUPER, THIS, TRUE, VAR, WHILE,
+	//
 	END_OF_FILE, INVALID,
 };
 
@@ -22,7 +26,7 @@ struct Tokenizer {
 };
 
 // returns 0 if there's no more characters in the buffer
-char tokenizer_peek(Tokenizer *tokenizer){
+static char tokenizer_peek(Tokenizer *tokenizer){
 	if(tokenizer->index >= tokenizer->count) {
 		return 0;
 	}
@@ -88,6 +92,13 @@ Token tokenizer_next_token(Tokenizer* tokenizer) {
 				next_token.kind = LESS_EQUAL; 
 			}
 		} break;
+		case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9': {
+			next_token.kind = NUMBER;
+			for(char next_char = tokenizer_peek(tokenizer); (next_char >= '0' && next_char <= '9') || next_char == '.'; next_char = tokenizer_peek(tokenizer)){
+				tokenizer->index++; // read the characters untill you hit the first non number character
+			}
+		} break; 
+
 	}
 
 	next_token.end = tokenizer->index;

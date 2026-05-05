@@ -7,7 +7,7 @@ bool operator==(Token t1, Token t2) { return t1.kind == t2.kind && t1.start == t
 
 Token newToken(Kind kind, u32 start, u32 end) { Token t = {.kind = kind, .start = start, .end = end}; return t; }
 
-void token_print(Token token) {
+void token_print(Token token, Tokenizer *tokenizer) {
 	char *string_kind;
 	switch(token.kind) {
 		case LEFT_PAREN: string_kind = "LEFT_PAREN"; break; 
@@ -29,13 +29,14 @@ void token_print(Token token) {
 		case GREATER_EQUAL: string_kind = "GREATER_EQUAL"; break; 
 		case LESS: string_kind = "LESS"; break; 
 		case LESS_EQUAL: string_kind = "LESS_EQUAL"; break; 
+		case NUMBER: string_kind = "NUMBER"; break; 
 		case END_OF_FILE: string_kind = "END_OF_FILE"; break;
 		case INVALID: string_kind = "INVALID"; break; 
-
 		default: string_kind = "UNKNOWN TOKEN KIND"; break;
 	}
 
-	printf("token{kind: %s, start: %d, end: %d}\n", string_kind, token.start, token.end);
+	//printf("token{kind: %s, start: %d, end: %d}\n", string_kind, token.start, token.end);
+	printf("token{kind: %s, start: %d, end: %d, lexeme: %.*s}\n", string_kind, token.start, token.end, token.end - token.start, tokenizer->buffer + token.start);
 }
 
 // BANG, BANG_EQUAL, EQUAL, EQUAL_EQUAL, GREATER, GREATER_EQUAL, LESS, LESS_EQUAL
@@ -43,7 +44,7 @@ void token_print(Token token) {
 void tokenizer_test() {
 	printf("TESTING THE TOKENIZER...\n");
 	Tokenizer tokenizer = {
-		.buffer = "(){},.-+;/*!=! = == > >= < <=",
+		.buffer = "(){},.-+;/*!=! = == > >= < <=99.8",
 		.index = 0,
 	};
 	tokenizer.count = strlen(tokenizer.buffer);
@@ -67,7 +68,14 @@ void tokenizer_test() {
 	ASSERT(tokenizer_next_token(&tokenizer) == newToken(GREATER_EQUAL, 22, 24));
 	ASSERT(tokenizer_next_token(&tokenizer) == newToken(LESS, 25, 26));
 	ASSERT(tokenizer_next_token(&tokenizer) == newToken(LESS_EQUAL, 27, 29));
-	ASSERT(tokenizer_next_token(&tokenizer) == newToken(END_OF_FILE, 29, 29));
+	ASSERT(tokenizer_next_token(&tokenizer) == newToken(NUMBER, 29, 33));
+	ASSERT(tokenizer_next_token(&tokenizer) == newToken(END_OF_FILE, 33, 33));
+
+	// for (;;){
+	// 	Token next_token = tokenizer_next_token(&tokenizer);
+	// 	token_print(next_token, &tokenizer);
+	// 	if (next_token.kind == END_OF_FILE) break;
+	// }
 
 	printf("DONE\n");
 }
